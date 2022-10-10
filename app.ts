@@ -1,4 +1,5 @@
 /** @format */
+import dotenv from 'dotenv';
 
-export const name = 'Diego';
-console.log(name);
+
+dotenv.config();
