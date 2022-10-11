@@ -1,4 +1,5 @@
 /** @format */
+import cors from 'cors';
 import express, { Application } from 'express';
 
 import { userRouter } from '../routes/users.routes';
@@ -13,7 +14,20 @@ export class Server {
 	constructor() {
 		this.app = express();
 		this.port = process.env.PORT || '8000';
+		this.middlewares();
 		this.routes();
+	}
+
+	/**
+	 * Method to set middlewares.
+	 */
+	middlewares(): void {
+		// CORS.
+		this.app.use(cors());
+		// Body reading.
+		this.app.use(express.json());
+		// Public folder.
+		this.app.use(express.static('public'));
 	}
 
 	/**
