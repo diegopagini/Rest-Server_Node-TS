@@ -28,7 +28,7 @@ export class Server {
 			await db.authenticate();
 			console.log('Database online');
 		} catch (error: any) {
-			throw new Error(error);
+			console.error(error);
 		}
 	}
 

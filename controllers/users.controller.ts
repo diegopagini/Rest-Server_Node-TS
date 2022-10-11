@@ -1,15 +1,17 @@
 /** @format */
 import { Request, Response } from 'express';
 
+import { User } from '../models/user';
+
 /**
  * Function to get all users.
  * @param {Request} req
  * @param {Response} res
  */
-export const getUsers = (req: Request, res: Response) => {
-	res.json({
-		msg: 'getUsers',
-	});
+export const getUsers = async (req: Request, res: Response) => {
+	const users = await User.findAll();
+
+	res.json({ users });
 };
 
 /**
@@ -17,12 +19,17 @@ export const getUsers = (req: Request, res: Response) => {
  * @param {Request} req
  * @param {Response} res
  */
-export const getUser = (req: Request, res: Response) => {
+export const getUser = async (req: Request, res: Response) => {
 	const { id } = req.params;
+	const user = await User.findByPk(id);
 
-	res.json({
-		msg: 'getUser',
-		id,
+	if (!user)
+		return res.status(404).json({
+			msg: `User with ${id} not exist.`,
+		});
+
+	return res.json({
+		user,
 	});
 };
 
