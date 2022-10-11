@@ -2,6 +2,7 @@
 import cors from 'cors';
 import express, { Application } from 'express';
 
+import { db } from '../database/connection';
 import { userRouter } from '../routes/users.routes';
 
 export class Server {
@@ -14,8 +15,21 @@ export class Server {
 	constructor() {
 		this.app = express();
 		this.port = process.env.PORT || '8000';
+		this.dbConnection();
 		this.middlewares();
 		this.routes();
+	}
+
+	/**
+	 * Method to connect to mysq.
+	 */
+	async dbConnection() {
+		try {
+			await db.authenticate();
+			console.log('Database online');
+		} catch (error: any) {
+			throw new Error(error);
+		}
 	}
 
 	/**
