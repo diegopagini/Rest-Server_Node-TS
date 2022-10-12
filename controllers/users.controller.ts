@@ -38,13 +38,31 @@ export const getUser = async (req: Request, res: Response) => {
  * @param {Request} req
  * @param {Response} res
  */
-export const createUser = (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response) => {
 	const { body } = req;
 
-	res.json({
-		msg: 'createUser',
-		body,
-	});
+	try {
+		const emailExist = await User.findOne({
+			where: {
+				email: body.email,
+			},
+		});
+
+		if (!emailExist)
+			return res.status(400).json({
+				msg: 'That email is already taken.',
+			});
+
+		const user = User.build(body); // "User.build" to create a new user. Like new User().
+		await user.save();
+
+		return res.json(user);
+	} catch (error) {
+		console.error(error);
+		return res.status(500).json({
+			msg: 'Talk to the administrator.',
+		});
+	}
 };
 
 /**
@@ -52,15 +70,26 @@ export const createUser = (req: Request, res: Response) => {
  * @param {Request} req
  * @param {Response} res
  */
-export const updateUser = (req: Request, res: Response) => {
+export const updateUser = async (req: Request, res: Response) => {
 	const { id } = req.params;
 	const { body } = req;
 
-	res.json({
-		msg: 'updateUser',
-		body,
-		id,
-	});
+	try {
+		const user = await User.findByPk(id);
+		if (!user)
+			return res.status(404).json({
+				msg: `That user does not exist.`,
+			});
+
+		await user.update(body);
+
+		return res.json(user);
+	} catch (error) {
+		console.error(error);
+		return res.status(500).json({
+			msg: 'Talk to the administrator.',
+		});
+	}
 };
 
 /**
